@@ -1,0 +1,28 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(flutter pub *)",
+      "Bash(dart run *)",
+      "Bash(dir /s /b lib\\\\models\\\\*.freezed.dart lib\\\\models\\\\*.g.dart)",
+      "Bash(flutter analyze *)",
+      "Bash(dir /s /b \"D:\\\\flutter\\\\kl16 pro\\\\kl16pro\\\\.dart_tool\")",
+      "Bash(findstr \"web_plugin_registrant\")",
+      "Bash(findstr /i \"web_plugin_registrant\")",
+      "Bash(findstr /i \"registrant\")",
+      "Bash(dir /s /b \"D:\\\\flutter\\\\kl16 pro\\\\kl16pro\\\\.dart_tool\\\\build\")",
+      "Bash(flutter clean *)",
+      "Bash(Get-Content \"D:\\\\flutter\\\\kl16 pro\\\\kl16pro\\\\lib\\\\repositories\\\\auth_repository.dart\")",
+      "PowerShell(cd \"D:\\\\flutter\\\\kl16 pro\\\\kl16pro\"; flutter analyze 2>&1 | Where-Object { $_ -match \"error\" })",
+      "Bash(New-Item -ItemType Directory -Force -Path \"D:\\\\flutter\\\\kl16pro\\\\android\\\\app\\\\src\\\\main\\\\kotlin\\\\com\\\\kl16\\\\garagepro\")",
+      "Bash(Out-Null)",
+      "Bash(Move-Item -Path \"D:\\\\flutter\\\\kl16pro\\\\android\\\\app\\\\src\\\\main\\\\kotlin\\\\com\\\\example\\\\kl16pro\\\\MainActivity.kt\" -Destination \"D:\\\\flutter\\\\kl16pro\\\\android\\\\app\\\\src\\\\main\\\\kotlin\\\\com\\\\kl16\\\\garagepro\\\\MainActivity.kt\")",
+      "Bash(Remove-Item -Recurse -Force \"D:\\\\flutter\\\\kl16pro\\\\android\\\\app\\\\src\\\\main\\\\kotlin\\\\com\\\\example\" -ErrorAction SilentlyContinue)",
+      "Bash(Write-Host \"Done\")",
+      "PowerShell(New-Item -ItemType Directory -Force -Path \"D:\\\\flutter\\\\kl16pro\\\\android\\\\app\\\\src\\\\main\\\\kotlin\\\\com\\\\kl16\\\\garagepro\")",
+      "PowerShell(Move-Item -Path \"D:\\\\flutter\\\\kl16pro\\\\android\\\\app\\\\src\\\\main\\\\kotlin\\\\com\\\\example\\\\kl16pro\\\\MainActivity.kt\" -Destination \"D:\\\\flutter\\\\kl16pro\\\\android\\\\app\\\\src\\\\main\\\\kotlin\\\\com\\\\kl16\\\\garagepro\\\\MainActivity.kt\")",
+      "Bash(Get-ChildItem -Path \"D:\\\\flutter\\\\kl16pro\\\\lib\\\\features\\\\\" -Directory | Select-Object -ExpandProperty Name)",
+      "PowerShell(Get-ChildItem -Path \"D:\\\\flutter\\\\kl16pro\\\\lib\\\\core\\\\widgets\\\\\" -File | ForEach-Object { $_.FullName })",
+      "Bash(dart analyze *)"
+    ]
+  }
+}

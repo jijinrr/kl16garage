@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "531469003054",
+    "project_id": "kl16-pro",
+    "storage_bucket": "kl16-pro.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:531469003054:android:1759ceea5f67d8275a72bf",
+        "android_client_info": {
+          "package_name": "com.kl16.garagepro"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB37j1ulgDQtqZw9-xkrSUbKmWUeMP2RSg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
