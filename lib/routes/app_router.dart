@@ -37,31 +37,34 @@ class Routes {
   static const login = '/login';
   static const forgotPassword = '/forgot-password';
 
-  // Staff shell
+  // Staff shell tabs
   static const staffHome = '/staff/home';
   static const staffToday = '/staff/today';
-  static const staffStocks = '/staff/stocks';
   static const staffExpenses = '/staff/expenses';
   static const staffSettings = '/staff/settings';
 
-  // Staff full-screen
+  // Staff full-screen routes (push — no bottom nav)
   static const staffAddCustomer = '/staff/add-customer';
+  static const staffStocks = '/staff/stocks';
   static const staffAddStock = '/staff/add-stock';
 
-  // Admin shell
+  // Admin shell tabs
   static const adminHome = '/admin/home';
   static const adminAnalytics = '/admin/analytics';
   static const adminAttendance = '/admin/attendance';
   static const adminStaff = '/admin/staff';
-  static const adminAddStaff = '/admin/add-staff';
   static const adminSettings = '/admin/settings';
+
+  // Admin full-screen routes (push — no bottom nav)
+  static const adminAddStaff = '/admin/add-staff';
   static const adminReports = '/admin/reports';
   static const adminHistory = '/admin/history';
   static const adminCustomerHistory = '/admin/customer-history';
 }
 
 /// Creates and returns the GoRouter instance.
-/// Must be created OUTSIDE build() to prevent recreation on provider changes.
+/// Uses [StatefulShellRoute.indexedStack] so each tab keeps its own
+/// navigation stack and scroll position — zero flicker on tab switches.
 GoRouter createRouter(AuthProvider authProvider) {
   return GoRouter(
     initialLocation: Routes.splash,
@@ -70,7 +73,6 @@ GoRouter createRouter(AuthProvider authProvider) {
       final status = authProvider.status;
       final loc = state.matchedLocation;
 
-      // Still determining auth state — stay on splash
       if (status == AuthStatus.unknown) {
         return loc == Routes.splash ? null : Routes.splash;
       }
@@ -80,12 +82,10 @@ GoRouter createRouter(AuthProvider authProvider) {
           loc == Routes.login ||
           loc == Routes.forgotPassword;
 
-      // Unauthenticated: if not on an auth route → send to role selection
       if (status == AuthStatus.unauthenticated && !isAuthRoute) {
         return Routes.roleSelection;
       }
 
-      // Authenticated: if still on splash or role selection → go to dashboard
       if (status == AuthStatus.authenticated &&
           (loc == Routes.splash || loc == Routes.roleSelection)) {
         return authProvider.role == UserRole.admin
@@ -105,7 +105,6 @@ GoRouter createRouter(AuthProvider authProvider) {
       // ── Auth ──────────────────────────────────────────────────────────────
       GoRoute(
         path: Routes.roleSelection,
-        builder: (_, _) => const RoleSelectionScreen(),
         pageBuilder: (_, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const RoleSelectionScreen(),
@@ -116,7 +115,6 @@ GoRouter createRouter(AuthProvider authProvider) {
       ),
       GoRoute(
         path: Routes.login,
-        builder: (_, _) => const LoginScreen(),
         pageBuilder: (_, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const LoginScreen(),
@@ -124,7 +122,8 @@ GoRouter createRouter(AuthProvider authProvider) {
             position: Tween<Offset>(
               begin: const Offset(1, 0),
               end: Offset.zero,
-            ).animate(CurvedAnimation(parent: anim, curve: Curves.easeOutCubic)),
+            ).animate(
+                CurvedAnimation(parent: anim, curve: Curves.easeOutCubic)),
             child: child,
           ),
           transitionDuration: const Duration(milliseconds: 320),
@@ -135,83 +134,97 @@ GoRouter createRouter(AuthProvider authProvider) {
         builder: (_, _) => const ForgotPasswordScreen(),
       ),
 
-      // ── Staff shell ───────────────────────────────────────────────────────
-      ShellRoute(
-        builder: (_, _, child) => StaffShell(child: child),
-        routes: [
-          GoRoute(
-            path: Routes.staffHome,
-            builder: (_, _) => const StaffHomeScreen(),
-          ),
-          GoRoute(
-            path: Routes.staffToday,
-            builder: (_, _) => const TodayScreen(),
-          ),
-          GoRoute(
-            path: Routes.staffStocks,
-            builder: (_, _) => const StockScreen(),
-          ),
-          GoRoute(
-            path: Routes.staffExpenses,
-            builder: (_, _) => const ExpensesScreen(),
-          ),
-          GoRoute(
-            path: Routes.staffSettings,
-            builder: (_, _) => const StaffSettingsScreen(),
-          ),
+      // ── Staff — persistent indexed shell (4 tabs) ─────────────────────────
+      StatefulShellRoute.indexedStack(
+        builder: (_, _, navigationShell) =>
+            StaffShell(navigationShell: navigationShell),
+        branches: [
+          StatefulShellBranch(routes: [
+            GoRoute(
+              path: Routes.staffHome,
+              builder: (_, _) => const StaffHomeScreen(),
+            ),
+          ]),
+          StatefulShellBranch(routes: [
+            GoRoute(
+              path: Routes.staffToday,
+              builder: (_, _) => const TodayScreen(),
+            ),
+          ]),
+          StatefulShellBranch(routes: [
+            GoRoute(
+              path: Routes.staffExpenses,
+              builder: (_, _) => const ExpensesScreen(),
+            ),
+          ]),
+          StatefulShellBranch(routes: [
+            GoRoute(
+              path: Routes.staffSettings,
+              builder: (_, _) => const StaffSettingsScreen(),
+            ),
+          ]),
         ],
       ),
 
-      // Staff full-screen routes (outside shell)
+      // ── Staff full-screen routes (push — outside shell) ───────────────────
       GoRoute(
         path: Routes.staffAddCustomer,
-        builder: (context, state) {
-          final service = state.extra as ServiceModel?;
-          return AddCustomerScreen(existingService: service);
-        },
+        builder: (_, state) =>
+            AddCustomerScreen(existingService: state.extra as ServiceModel?),
+      ),
+      GoRoute(
+        path: Routes.staffStocks,
+        builder: (_, _) => const StockScreen(),
       ),
       GoRoute(
         path: Routes.staffAddStock,
-        builder: (context, state) {
-          final stock = state.extra as StockModel?;
-          return AddStockScreen(existingStock: stock);
-        },
+        builder: (_, state) =>
+            AddStockScreen(existingStock: state.extra as StockModel?),
       ),
 
-      // ── Admin shell ───────────────────────────────────────────────────────
-      ShellRoute(
-        builder: (_, _, child) => AdminShell(child: child),
-        routes: [
-          GoRoute(
-            path: Routes.adminHome,
-            builder: (_, _) => const AdminHomeScreen(),
-          ),
-          GoRoute(
-            path: Routes.adminAnalytics,
-            builder: (_, _) => const AnalyticsScreen(),
-          ),
-          GoRoute(
-            path: Routes.adminAttendance,
-            builder: (_, _) => const AttendanceScreen(),
-          ),
-          GoRoute(
-            path: Routes.adminStaff,
-            builder: (_, _) => const StaffListScreen(),
-          ),
-          GoRoute(
-            path: Routes.adminSettings,
-            builder: (_, _) => const AdminSettingsScreen(),
-          ),
+      // ── Admin — persistent indexed shell (5 tabs) ─────────────────────────
+      StatefulShellRoute.indexedStack(
+        builder: (_, _, navigationShell) =>
+            AdminShell(navigationShell: navigationShell),
+        branches: [
+          StatefulShellBranch(routes: [
+            GoRoute(
+              path: Routes.adminHome,
+              builder: (_, _) => const AdminHomeScreen(),
+            ),
+          ]),
+          StatefulShellBranch(routes: [
+            GoRoute(
+              path: Routes.adminAnalytics,
+              builder: (_, _) => const AnalyticsScreen(),
+            ),
+          ]),
+          StatefulShellBranch(routes: [
+            GoRoute(
+              path: Routes.adminAttendance,
+              builder: (_, _) => const AttendanceScreen(),
+            ),
+          ]),
+          StatefulShellBranch(routes: [
+            GoRoute(
+              path: Routes.adminStaff,
+              builder: (_, _) => const StaffListScreen(),
+            ),
+          ]),
+          StatefulShellBranch(routes: [
+            GoRoute(
+              path: Routes.adminSettings,
+              builder: (_, _) => const AdminSettingsScreen(),
+            ),
+          ]),
         ],
       ),
 
-      // Admin full-screen routes (outside shell)
+      // ── Admin full-screen routes (push — outside shell) ───────────────────
       GoRoute(
         path: Routes.adminAddStaff,
-        builder: (context, state) {
-          final staff = state.extra as StaffModel?;
-          return AddStaffScreen(existingStaff: staff);
-        },
+        builder: (_, state) =>
+            AddStaffScreen(existingStaff: state.extra as StaffModel?),
       ),
       GoRoute(
         path: Routes.adminReports,
@@ -226,7 +239,7 @@ GoRouter createRouter(AuthProvider authProvider) {
         builder: (_, _) => const CustomerHistoryScreen(),
       ),
     ],
-    errorBuilder: (context, state) => Scaffold(
+    errorBuilder: (_, state) => Scaffold(
       backgroundColor: const Color(0xFF0D0D0D),
       body: Center(
         child: Text(

@@ -6,6 +6,7 @@ import '../../../core/constants/app_strings.dart';
 import '../../../core/utils/date_helpers.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/app_snackbar.dart';
+import '../../../core/widgets/common_dashboard_appbar.dart';
 import '../../../core/widgets/glassmorphism_card.dart';
 import '../../../models/attendance_model.dart';
 import '../../../providers/attendance_provider.dart';
@@ -86,9 +87,9 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(
-        title: const Text(AppStrings.attendance),
-        actions: [
+      appBar: CommonDashboardAppBar(
+        title: AppStrings.attendance,
+        extraActions: [
           IconButton(
             icon: const Icon(Icons.calendar_today_outlined),
             onPressed: _pickDate,

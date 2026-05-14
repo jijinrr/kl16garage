@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
+import '../../../core/widgets/common_dashboard_appbar.dart';
 import '../../../core/widgets/empty_state_widget.dart';
 import '../../../core/widgets/glassmorphism_card.dart';
 import '../../../core/widgets/shimmer_loader.dart';
@@ -33,8 +34,9 @@ class _StockScreenState extends State<StockScreen> {
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(
-        title: const Text('Stock Management'),
+      appBar: const CommonDashboardAppBar(
+        title: 'Stock Management',
+        showBack: true,
       ),
       body: RefreshIndicator(
         color: AppColors.primary,

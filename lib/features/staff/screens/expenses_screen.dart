@@ -5,6 +5,7 @@ import '../../../core/constants/app_sizes.dart';
 import '../../../core/constants/app_strings.dart';
 import '../../../core/utils/currency_helpers.dart';
 import '../../../core/utils/date_helpers.dart';
+import '../../../core/widgets/common_dashboard_appbar.dart';
 import '../../../core/widgets/empty_state_widget.dart';
 import '../../../core/widgets/glassmorphism_card.dart';
 import '../../../core/widgets/shimmer_loader.dart';
@@ -42,9 +43,7 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(
-        title: const Text(AppStrings.expenses),
-      ),
+      appBar: const CommonDashboardAppBar(title: 'Expenses'),
       body: Column(
         children: [
           // ── Daily total card ──────────────────────────────────────────

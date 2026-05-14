@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
 import '../../../core/constants/app_strings.dart';
+import '../../../core/widgets/common_dashboard_appbar.dart';
 import '../../../core/widgets/glassmorphism_card.dart';
 import '../../../providers/auth_provider.dart';
 import '../../../providers/settings_provider.dart';
@@ -17,7 +18,7 @@ class StaffSettingsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(title: const Text(AppStrings.settings)),
+      appBar: const CommonDashboardAppBar(title: 'Settings'),
       body: ListView(
         padding: const EdgeInsets.symmetric(
           horizontal: AppSizes.pagePaddingH,

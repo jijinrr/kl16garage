@@ -5,7 +5,7 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
 import '../../../core/constants/app_strings.dart';
 import '../../../core/utils/currency_helpers.dart';
-import '../../../core/utils/date_helpers.dart';
+import '../../../core/widgets/common_dashboard_appbar.dart';
 import '../../../core/widgets/empty_state_widget.dart';
 import '../../../core/widgets/glassmorphism_card.dart';
 import '../../../core/widgets/shimmer_loader.dart';
@@ -21,7 +21,11 @@ class TodayScreen extends StatefulWidget {
   State<TodayScreen> createState() => _TodayScreenState();
 }
 
-class _TodayScreenState extends State<TodayScreen> {
+class _TodayScreenState extends State<TodayScreen>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
   @override
   void initState() {
     super.initState();
@@ -33,30 +37,16 @@ class _TodayScreenState extends State<TodayScreen> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final service = context.watch<ServiceProvider>();
     final analytics = context.watch<AnalyticsProvider>();
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(AppStrings.todayServices),
-            Text(
-              DateHelpers.formatDate(DateTime.now()),
-              style: const TextStyle(
-                color: AppColors.textHint,
-                fontSize: AppSizes.fontSm,
-                fontWeight: FontWeight.w400,
-              ),
-            ),
-          ],
-        ),
-      ),
+      appBar: const CommonDashboardAppBar(title: 'Today'),
       body: Column(
         children: [
-          // ── Revenue summary card ──────────────────────────────────────
+          // ── 5-stat summary card ───────────────────────────────────────
           Padding(
             padding: const EdgeInsets.fromLTRB(
               AppSizes.pagePaddingH,
@@ -66,7 +56,8 @@ class _TodayScreenState extends State<TodayScreen> {
             ),
             child: GlassmorphismCard(
               redBorder: true,
-              padding: const EdgeInsets.all(AppSizes.lg),
+              padding: const EdgeInsets.symmetric(
+                  vertical: AppSizes.md, horizontal: AppSizes.sm),
               child: Row(
                 children: [
                   _MiniStat(
@@ -76,7 +67,7 @@ class _TodayScreenState extends State<TodayScreen> {
                   ),
                   _Divider(),
                   _MiniStat(
-                    label: 'Completed',
+                    label: 'Done',
                     value: '${service.completedCount}',
                     color: AppColors.success,
                   ),
@@ -103,23 +94,6 @@ class _TodayScreenState extends State<TodayScreen> {
             ),
           ),
 
-          // ── Search bar ────────────────────────────────────────────────
-          Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppSizes.pagePaddingH,
-              vertical: AppSizes.sm,
-            ),
-            child: TextField(
-              onChanged: service.setSearch,
-              style: const TextStyle(color: AppColors.textPrimary),
-              decoration: const InputDecoration(
-                hintText: AppStrings.searchVehicle,
-                prefixIcon:
-                    Icon(Icons.search, color: AppColors.textHint),
-              ),
-            ),
-          ),
-
           // ── Service list ──────────────────────────────────────────────
           Expanded(
             child: service.isLoading
@@ -136,22 +110,22 @@ class _TodayScreenState extends State<TodayScreen> {
                     : ListView.builder(
                         padding: const EdgeInsets.fromLTRB(
                           AppSizes.pagePaddingH,
-                          0,
+                          AppSizes.sm,
                           AppSizes.pagePaddingH,
                           100,
                         ),
                         itemCount: service.todayServices.length,
                         itemBuilder: (_, i) {
                           final s = service.todayServices[i];
-                          return ServiceCard(
-                            service: s,
-                            onComplete: () =>
-                                service.markCompleted(s.id),
-                            onDelete: () =>
-                                service.deleteService(s.id),
-                            onTap: () => context.push(
-                              Routes.staffAddCustomer,
-                              extra: s,
+                          return RepaintBoundary(
+                            child: ServiceCard(
+                              service: s,
+                              onComplete: () => service.markCompleted(s.id),
+                              onDelete: () => service.deleteService(s.id),
+                              onTap: () => context.push(
+                                Routes.staffAddCustomer,
+                                extra: s,
+                              ),
                             ),
                           );
                         },
@@ -174,7 +148,6 @@ class _MiniStat extends StatelessWidget {
     required this.value,
     required this.color,
   });
-
   final String label;
   final String value;
   final Color color;
@@ -189,7 +162,7 @@ class _MiniStat extends StatelessWidget {
             value,
             style: TextStyle(
               color: color,
-              fontSize: AppSizes.fontLg,
+              fontSize: AppSizes.fontMd,
               fontWeight: FontWeight.w700,
             ),
           ),
@@ -209,10 +182,6 @@ class _MiniStat extends StatelessWidget {
 class _Divider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 1,
-      height: 32,
-      color: AppColors.border,
-    );
+    return Container(width: 1, height: 28, color: AppColors.border);
   }
 }

@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
 import '../../../core/constants/app_strings.dart';
+import '../../../core/widgets/common_dashboard_appbar.dart';
 import '../../../core/widgets/glassmorphism_card.dart';
 import '../../../core/widgets/stat_card.dart';
 import '../../../providers/analytics_provider.dart';
@@ -37,12 +38,11 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(
-        title: const Text(AppStrings.analytics),
-        actions: [
-          // Period selector
+      appBar: CommonDashboardAppBar(
+        title: AppStrings.analytics,
+        extraActions: [
           _PeriodChips(analytics: analytics),
-          const SizedBox(width: AppSizes.sm),
+          const SizedBox(width: AppSizes.xs),
         ],
       ),
       body: analytics.isLoading
